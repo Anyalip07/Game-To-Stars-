@@ -59,7 +59,6 @@ class Player(pygame.sprite.Sprite):
         self.pos = (pos_x, pos_y)
 
 
-
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('To Stars!')
