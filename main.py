@@ -40,13 +40,24 @@ def start_screen():
     screen.blit(string_rendered, intro_rect)
 
     while True:
+        ok = 0
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                return
+                ok = 1
+                break
+        if ok:
+            break
         screen.blit(fon_start, (0, 0))
         screen.blit(string_rendered, intro_rect)
+        player_group.draw(screen)
+        pygame.display.flip()
+        clock.tick(FPS)
+
+    for i in range(24):
+        screen.blit(fon, (0, 0))
+        player.down()
         player_group.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)
@@ -72,6 +83,23 @@ class Player(pygame.sprite.Sprite):
         self.pos = (self.pos[0] + GO, self.pos[1])
         self.rect = self.image.get_bounding_rect().move(self.pos[0], self.pos[1])
 
+    def down(self):
+        self.pos = (self.pos[0], self.pos[1] + GO)
+        self.rect = self.image.get_bounding_rect().move(self.pos[0], self.pos[1])
+
+
+class Star(pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y):
+        super().__init__(star_group, all_sprites)
+        self.image = star_image
+        self.rect = self.image.get_bounding_rect().move(pos_x, pos_y)
+        self.pos = (pos_x, pos_y)
+        self.width = self.image.get_bounding_rect().width
+
+    def move(self):
+        self.pos = (self.pos[0], self.pos[1] + GO)
+        self.rect = self.image.get_bounding_rect().move(self.pos[0], self.pos[1])
+
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -84,6 +112,7 @@ fon_start = pygame.transform.scale(load_image('sky_start.jpg'), (400, 645))
 
 all_sprites = pygame.sprite.Group()
 player_group = pygame.sprite.Group()
+star_group = pygame.sprite.Group()
 player_image = pygame.transform.scale(load_image('rocket.png'), (250, 250))
 star_image = pygame.transform.scale(load_image('star.png'), (70, 70))
 meteorite_image = pygame.transform.scale(load_image('meteorite.png'), (50, 100))
