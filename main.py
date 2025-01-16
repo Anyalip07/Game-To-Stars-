@@ -3,8 +3,9 @@ import sys
 
 import pygame
 
-FPS = 50
+FPS = 60
 WIDTH, HEIGHT = 400, 635
+GO = 5
 
 
 def terminate():
@@ -55,8 +56,21 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
         super().__init__(player_group, all_sprites)
         self.image = player_image
-        self.rect = self.image.get_rect().move(pos_x, pos_y)
+        self.rect = self.image.get_bounding_rect().move(pos_x, pos_y)
         self.pos = (pos_x, pos_y)
+        self.width = self.image.get_bounding_rect().width
+
+    def left(self):
+        if self.pos[0] - GO < -WIDTH / 2 + self.width / 2 - 3:
+            return
+        self.pos = (self.pos[0] - GO, self.pos[1])
+        self.rect = self.image.get_bounding_rect().move(self.pos[0], self.pos[1])
+
+    def right(self):
+        if self.pos[0] + GO > WIDTH / 2 - self.width / 2 + 3:
+            return
+        self.pos = (self.pos[0] + GO, self.pos[1])
+        self.rect = self.image.get_bounding_rect().move(self.pos[0], self.pos[1])
 
 
 pygame.init()
@@ -74,14 +88,18 @@ player_image = pygame.transform.scale(load_image('rocket.png'), (250, 250))
 star_image = pygame.transform.scale(load_image('star.png'), (70, 70))
 meteorite_image = pygame.transform.scale(load_image('meteorite.png'), (50, 100))
 
-player = Player(75, 300)
-
+player = Player(0, 230)
 start_screen()
 
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             terminate()
+    pressed = pygame.key.get_pressed()
+    if pressed[pygame.K_LEFT]:
+        player.left()
+    if pressed[pygame.K_RIGHT]:
+        player.right()
     screen.blit(fon, (0, 0))
     player_group.draw(screen)
     pygame.display.flip()
