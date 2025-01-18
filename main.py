@@ -71,6 +71,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_bounding_rect().move(pos_x, pos_y)
         self.pos = (pos_x, pos_y)
         self.width = self.image.get_bounding_rect().width
+        self.mask = pygame.mask.from_surface(self.image)
 
     def left(self):
         if self.pos[0] - GO < -WIDTH / 2 + self.width / 2 - 3:
@@ -88,6 +89,10 @@ class Player(pygame.sprite.Sprite):
         self.pos = (self.pos[0], self.pos[1] + GO)
         self.rect = self.image.get_bounding_rect().move(self.pos[0], self.pos[1])
 
+    # def update(self, star_or_comet):
+    #     if not pygame.sprite.collide_mask(self, mountain):
+    #         self.rect = self.rect.move(0, 1)
+
 
 class Star(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
@@ -96,10 +101,12 @@ class Star(pygame.sprite.Sprite):
         self.rect = self.image.get_bounding_rect().move(pos_x, pos_y)
         self.pos = (pos_x, pos_y)
         self.width = self.image.get_bounding_rect().width
+        self.mask = pygame.mask.from_surface(self.image)
 
     def move(self, go_down):
         self.pos = (self.pos[0], self.pos[1] + go_down)
         self.rect = self.image.get_bounding_rect().move(self.pos[0], self.pos[1])
+
 
 class Comet(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
@@ -108,10 +115,12 @@ class Comet(pygame.sprite.Sprite):
         self.rect = self.image.get_bounding_rect().move(pos_x, pos_y)
         self.pos = (pos_x, pos_y)
         self.width = self.image.get_bounding_rect().width
+        self.mask = pygame.mask.from_surface(self.image)
 
     def move(self, go_down):
         self.pos = (self.pos[0], self.pos[1] + go_down)
         self.rect = self.image.get_bounding_rect().move(self.pos[0], self.pos[1])
+
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -143,6 +152,7 @@ ind_star = 1
 sum_time_move_comet = 0
 sum_time_add_comet = 0
 ind_comet = 1
+score = 0
 
 while True:
     for event in pygame.event.get():
@@ -178,6 +188,18 @@ while True:
         player.left()
     if pressed[pygame.K_RIGHT]:
         player.right()
+
+    list_star = []
+    list_comet = []
+    for x in player_group:
+        list_star = pygame.sprite.spritecollide(x, star_group, True)
+    for x in player_group:
+        list_comet = pygame.sprite.spritecollide(x, comet_group, True)
+
+    if list_comet:
+        terminate()
+
+    score += len(list_star)
 
     screen.blit(fon, (0, 0))
     comet_group.draw(screen)
