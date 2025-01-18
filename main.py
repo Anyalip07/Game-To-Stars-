@@ -1,9 +1,10 @@
 import os
 import sys
+import random
 
 import pygame
 
-FPS = 60
+FPS = 70
 WIDTH, HEIGHT = 400, 635
 GO = 5
 
@@ -96,10 +97,21 @@ class Star(pygame.sprite.Sprite):
         self.pos = (pos_x, pos_y)
         self.width = self.image.get_bounding_rect().width
 
-    def move(self):
-        self.pos = (self.pos[0], self.pos[1] + GO)
+    def move(self, go_down):
+        self.pos = (self.pos[0], self.pos[1] + go_down)
         self.rect = self.image.get_bounding_rect().move(self.pos[0], self.pos[1])
 
+class Comet(pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y):
+        super().__init__(comet_group, all_sprites)
+        self.image = comet_image
+        self.rect = self.image.get_bounding_rect().move(pos_x, pos_y)
+        self.pos = (pos_x, pos_y)
+        self.width = self.image.get_bounding_rect().width
+
+    def move(self, go_down):
+        self.pos = (self.pos[0], self.pos[1] + go_down)
+        self.rect = self.image.get_bounding_rect().move(self.pos[0], self.pos[1])
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -113,23 +125,63 @@ fon_start = pygame.transform.scale(load_image('sky_start.jpg'), (400, 645))
 all_sprites = pygame.sprite.Group()
 player_group = pygame.sprite.Group()
 star_group = pygame.sprite.Group()
+comet_group = pygame.sprite.Group()
 player_image = pygame.transform.scale(load_image('rocket.png'), (250, 250))
 star_image = pygame.transform.scale(load_image('star.png'), (70, 70))
-meteorite_image = pygame.transform.scale(load_image('meteorite.png'), (50, 100))
+comet_image = pygame.transform.scale(load_image('meteorite.png'), (50, 100))
 
 player = Player(0, 230)
 start_screen()
+
+level = int(input())
+level -= 1
+levels_stars = [(10, 1000, 700, 800, 900), (7, 1000, 700, 800, 900), (5, 1000, 700, 800, 900)]
+levels_comets = [(10, 1000, 700, 800, 900), (7, 1000, 700, 800, 900), (5, 1000, 700, 800, 900)]
+sum_time_move_star = 0
+sum_time_add_star = 0
+ind_star = 1
+sum_time_move_comet = 0
+sum_time_add_comet = 0
+ind_comet = 1
 
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             terminate()
+
+    last_time = clock.tick(FPS)
+    sum_time_add_star += last_time
+    sum_time_move_star += last_time
+    sum_time_add_comet += last_time
+    sum_time_move_comet += last_time
+
+    if sum_time_move_star > levels_stars[level][0]:
+        sum_time_move_star = 0
+        for star in star_group:
+            star.move(5)
+    if sum_time_add_star > levels_stars[level][ind_star]:
+        ind_star = random.randint(1, 4)
+        Star(random.randint(0, 300), -80)
+        sum_time_add_star = 0
+
+    if sum_time_move_comet > levels_comets[level][0]:
+        sum_time_move_comet = 0
+        for comet in comet_group:
+            comet.move(5)
+    if sum_time_add_comet > levels_comets[level][ind_comet]:
+        ind_comet = random.randint(1, 4)
+        Comet(random.randint(0, 300), -80)
+        sum_time_add_comet = 0
+
     pressed = pygame.key.get_pressed()
     if pressed[pygame.K_LEFT]:
         player.left()
     if pressed[pygame.K_RIGHT]:
         player.right()
+
     screen.blit(fon, (0, 0))
+    comet_group.draw(screen)
+    star_group.draw(screen)
     player_group.draw(screen)
     pygame.display.flip()
-    clock.tick(FPS)
+    # clock.tick(FPS)
