@@ -89,9 +89,12 @@ class Player(pygame.sprite.Sprite):
         self.pos = (self.pos[0], self.pos[1] + GO)
         self.rect = self.image.get_bounding_rect().move(self.pos[0], self.pos[1])
 
-    # def update(self, star_or_comet):
-    #     if not pygame.sprite.collide_mask(self, mountain):
-    #         self.rect = self.rect.move(0, 1)
+    def boom(self, star_or_comet):
+        if pygame.sprite.collide_mask(self, star_or_comet):
+            star_or_comet.kill()
+            return 1
+        else:
+            return 0
 
 
 class Star(pygame.sprite.Sprite):
@@ -142,8 +145,9 @@ comet_image = pygame.transform.scale(load_image('meteorite.png'), (50, 100))
 player = Player(0, 230)
 start_screen()
 
-level = int(input())
-level -= 1
+# level = int(input())
+# level -= 1
+level = 0
 levels_stars = [(10, 1000, 700, 800, 900), (7, 1000, 700, 800, 900), (5, 1000, 700, 800, 900)]
 levels_comets = [(10, 1000, 700, 800, 900), (7, 1000, 700, 800, 900), (5, 1000, 700, 800, 900)]
 sum_time_move_star = 0
@@ -189,17 +193,24 @@ while True:
     if pressed[pygame.K_RIGHT]:
         player.right()
 
-    list_star = []
-    list_comet = []
-    for x in player_group:
-        list_star = pygame.sprite.spritecollide(x, star_group, True)
-    for x in player_group:
-        list_comet = pygame.sprite.spritecollide(x, comet_group, True)
+    # list_star = []
+    # list_comet = []
+    # for x in player_group:
+    #     list_star = pygame.sprite.spritecollide(x, star_group, True)
+    # for x in player_group:
+    #     list_comet = pygame.sprite.spritecollide(x, comet_group, True)
+    for star in star_group:
+        if player.boom(star):
+            score += 1
 
-    if list_comet:
-        terminate()
+    for comet in comet_group:
+        if player.boom(comet):
+            terminate()
 
-    score += len(list_star)
+    # if list_comet:
+    #     terminate()
+
+    # score += len(list_star)
 
     screen.blit(fon, (0, 0))
     comet_group.draw(screen)
