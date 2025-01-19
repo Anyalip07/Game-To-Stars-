@@ -6,6 +6,7 @@ import pygame
 FPS = 60
 WIDTH, HEIGHT = 400, 635
 GO = 5
+LEVEL = 1
 
 
 def terminate():
@@ -30,6 +31,7 @@ def load_image(name, colorkey=None):
 
 
 def start_screen():
+    global LEVEL
     intro_text = "нажмите пробел, чтобы начать игру"
     screen.blit(fon_start, (0, 0))
     font = pygame.font.Font(None, 30)
@@ -45,9 +47,24 @@ def start_screen():
                 terminate()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 return
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_UP and LEVEL < 3:
+                LEVEL += 1
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN and LEVEL > 1:
+                LEVEL -= 1
+        if LEVEL == 1:
+            lvl = lvl1
+            #coords = (75, 225)
+            coords = (75, 430)
+        elif LEVEL == 2:
+            lvl = lvl2
+            coords = (75, 430)
+        else:
+            lvl = lvl3
+            coords = (75, 430)
         screen.blit(fon_start, (0, 0))
         screen.blit(string_rendered, intro_rect)
         player_group.draw(screen)
+        screen.blit(lvl, coords)
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -87,8 +104,10 @@ player_group = pygame.sprite.Group()
 player_image = pygame.transform.scale(load_image('rocket.png'), (250, 250))
 star_image = pygame.transform.scale(load_image('star.png'), (70, 70))
 meteorite_image = pygame.transform.scale(load_image('meteorite.png'), (50, 100))
-
-player = Player(0, 230)
+lvl1 = pygame.transform.scale(load_image('lvl1.png'), (250, 150))
+lvl2 = pygame.transform.scale(load_image('lvl2.png'), (250, 150))
+lvl3 = pygame.transform.scale(load_image('lvl3.png'), (250, 150))
+player = Player(0, 210)
 start_screen()
 
 while True:
