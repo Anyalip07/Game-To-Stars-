@@ -85,21 +85,37 @@ def kill_sprites():
     for star in star_group:
         star.kill()
 
+def is_new_record(score):
+    f = open('record.txt')
+    a = f.read()
+    a = [int(i) for i in a]
+    f.close()
+    if a:
+        rec = a[0]
+        if score > rec:
+            with open('record.txt', 'w') as f:
+                f.writelines(str(score))
+            f.close()
+            return True
+        return False
+    else:
+        with open('record.txt', 'w') as f:
+            f.writelines(str(score))
+        f.close()
+        return True
 
 def end_screen():
     kill_sprites()
     screen.blit(fon, (0, 0))
-    try:
-        intro_text = str(score)
-    except NameError:
-        intro_text = '0'
+    intro_text = str(score)
     screen.blit(fon_start, (0, 0))
     font = pygame.font.Font(None, 55)
     string_rendered = font.render(intro_text, 1, pygame.Color('white'))
     intro_rect = string_rendered.get_rect()
-    intro_rect.top = 280
+    intro_rect.top = 270
     intro_rect.x = (WIDTH - intro_rect.width)/2
     screen.blit(string_rendered, intro_rect)
+    flag = is_new_record(score)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -110,6 +126,8 @@ def end_screen():
         player_group.draw(screen)
         screen.blit(res, (-30, 80))
         screen.blit(string_rendered, intro_rect)
+        if flag:
+            screen.blit(new_record, (85, 310))
         pygame.display.flip()
 
 
@@ -196,6 +214,7 @@ lvl1 = pygame.transform.scale(load_image('lvl1.png'), (300, 125))
 lvl2 = pygame.transform.scale(load_image('lvl2.png'), (300, 125))
 lvl3 = pygame.transform.scale(load_image('lvl3.png'), (300, 125))
 res = pygame.transform.scale(load_image('res.png'), (480, 200))
+new_record = pygame.transform.scale(load_image('new_record.png'), (240, 100))
 player = Player(0, 210)
 comet_image = pygame.transform.scale(load_image('meteorite.png'), (50, 100))
 
