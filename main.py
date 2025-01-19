@@ -234,6 +234,7 @@ sum_time_add_comet = 0
 ind_comet = 1
 score = 0
 end = False
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -295,6 +296,10 @@ while True:
     comet_group.draw(screen)
     star_group.draw(screen)
     player_group.draw(screen)
+    font_in_game = pygame.font.Font(None, 40)
+    text_in_game = font_in_game.render(f"Result: {score}", True, (255, 255, 255))
+    text_rect_in_game = text_in_game.get_rect(center=(320, 30))
+    screen.blit(text_in_game, text_rect_in_game)
     pygame.display.flip()
     # clock.tick(FPS)
 end_screen()
