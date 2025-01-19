@@ -57,20 +57,16 @@ def start_screen():
                 level -= 1
         if level == 0:
             lvl = lvl1
-            #coords = (75, 225)
-            coords = (75, 430)
         elif level == 1:
             lvl = lvl2
-            coords = (75, 430)
         else:
             lvl = lvl3
-            coords = (75, 430)
         if ok:
             break
         screen.blit(fon_start, (0, 0))
         screen.blit(string_rendered, intro_rect)
         player_group.draw(screen)
-        screen.blit(lvl, coords)
+        screen.blit(lvl, (50, 435))
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -80,6 +76,33 @@ def start_screen():
         player_group.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)
+
+
+def kill_sprites():
+    player.kill()
+    for comet in comet_group:
+        comet.kill()
+    for star in star_group:
+        star.kill()
+
+
+def end_screen():
+    kill_sprites()
+    screen.blit(fon, (0, 0))
+
+
+    screen.blit(fon_start, (0, 0))
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+        screen.blit(fon, (0, 0))
+        comet_group.draw(screen)
+        star_group.draw(screen)
+        player_group.draw(screen)
+        screen.blit(res, (-30, 80))
+        pygame.display.flip()
 
 
 class Player(pygame.sprite.Sprite):
@@ -161,12 +184,14 @@ star_image = pygame.transform.scale(load_image('star.png'), (70, 70))
 meteorite_image = pygame.transform.scale(load_image('meteorite.png'), (50, 100))
 
 level = 0
-lvl1 = pygame.transform.scale(load_image('lvl1.png'), (250, 150))
-lvl2 = pygame.transform.scale(load_image('lvl2.png'), (250, 150))
-lvl3 = pygame.transform.scale(load_image('lvl3.png'), (250, 150))
+lvl1 = pygame.transform.scale(load_image('lvl1.png'), (300, 125))
+lvl2 = pygame.transform.scale(load_image('lvl2.png'), (300, 125))
+lvl3 = pygame.transform.scale(load_image('lvl3.png'), (300, 125))
+res = pygame.transform.scale(load_image('res.png'), (480, 200))
 player = Player(0, 210)
 comet_image = pygame.transform.scale(load_image('meteorite.png'), (50, 100))
 
+#end_screen() #!!!
 start_screen()
 
 # level = int(input())
@@ -181,7 +206,7 @@ sum_time_move_comet = 0
 sum_time_add_comet = 0
 ind_comet = 1
 score = 0
-
+end = False
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -229,7 +254,10 @@ while True:
 
     for comet in comet_group:
         if player.boom(comet):
-            terminate()
+            end = True
+            break
+    if end:
+        break
 
     # if list_comet:
     #     terminate()
@@ -242,3 +270,4 @@ while True:
     player_group.draw(screen)
     pygame.display.flip()
     # clock.tick(FPS)
+end_screen()
