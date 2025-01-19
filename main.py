@@ -4,9 +4,10 @@ import random
 
 import pygame
 
-FPS = 70
+FPS = 60
 WIDTH, HEIGHT = 400, 635
 GO = 5
+LEVEL = 1
 
 
 def terminate():
@@ -31,7 +32,7 @@ def load_image(name, colorkey=None):
 
 
 def start_screen():
-    global LEVEL
+    global level
     intro_text = "нажмите пробел, чтобы начать игру"
     screen.blit(fon_start, (0, 0))
     font = pygame.font.Font(None, 30)
@@ -42,28 +43,28 @@ def start_screen():
     screen.blit(string_rendered, intro_rect)
 
     while True:
+        global level
         ok = 0
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                return
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_UP and LEVEL < 3:
-                LEVEL += 1
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN and LEVEL > 1:
-                LEVEL -= 1
-        if LEVEL == 1:
+                ok = 1
+                break
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_UP and level < 2:
+                level += 1
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN and level > 0:
+                level -= 1
+        if level == 0:
             lvl = lvl1
             #coords = (75, 225)
             coords = (75, 430)
-        elif LEVEL == 2:
+        elif level == 1:
             lvl = lvl2
             coords = (75, 430)
         else:
             lvl = lvl3
             coords = (75, 430)
-                ok = 1
-                break
         if ok:
             break
         screen.blit(fon_start, (0, 0))
@@ -158,6 +159,8 @@ comet_group = pygame.sprite.Group()
 player_image = pygame.transform.scale(load_image('rocket.png'), (250, 250))
 star_image = pygame.transform.scale(load_image('star.png'), (70, 70))
 meteorite_image = pygame.transform.scale(load_image('meteorite.png'), (50, 100))
+
+level = 0
 lvl1 = pygame.transform.scale(load_image('lvl1.png'), (250, 150))
 lvl2 = pygame.transform.scale(load_image('lvl2.png'), (250, 150))
 lvl3 = pygame.transform.scale(load_image('lvl3.png'), (250, 150))
@@ -168,7 +171,7 @@ start_screen()
 
 # level = int(input())
 # level -= 1
-level = 0
+
 levels_stars = [(10, 1000, 700, 800, 900), (7, 1000, 700, 800, 900), (5, 1000, 700, 800, 900)]
 levels_comets = [(10, 1000, 700, 800, 900), (7, 1000, 700, 800, 900), (5, 1000, 700, 800, 900)]
 sum_time_move_star = 0
