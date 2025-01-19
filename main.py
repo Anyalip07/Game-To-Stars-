@@ -98,7 +98,7 @@ def end_screen():
     string_rendered = font.render(intro_text, 1, pygame.Color('white'))
     intro_rect = string_rendered.get_rect()
     intro_rect.top = 280
-    intro_rect.x = (WIDTH - intro_rect.width)/2
+    intro_rect.x = (WIDTH - intro_rect.width) / 2
     screen.blit(string_rendered, intro_rect)
     while True:
         for event in pygame.event.get():
@@ -199,7 +199,7 @@ res = pygame.transform.scale(load_image('res.png'), (480, 200))
 player = Player(0, 210)
 comet_image = pygame.transform.scale(load_image('meteorite.png'), (50, 100))
 
-#end_screen() #!!!
+# end_screen() #!!!
 start_screen()
 
 # level = int(input())
@@ -215,6 +215,7 @@ sum_time_add_comet = 0
 ind_comet = 1
 score = 0
 end = False
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -276,6 +277,10 @@ while True:
     comet_group.draw(screen)
     star_group.draw(screen)
     player_group.draw(screen)
+    font_in_game = pygame.font.Font(None, 40)
+    text_in_game = font_in_game.render(f"Result: {score}", True, (255, 255, 255))
+    text_rect_in_game = text_in_game.get_rect(center=(320, 30))
+    screen.blit(text_in_game, text_rect_in_game)
     pygame.display.flip()
     # clock.tick(FPS)
 end_screen()
