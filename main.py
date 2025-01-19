@@ -89,10 +89,17 @@ def kill_sprites():
 def end_screen():
     kill_sprites()
     screen.blit(fon, (0, 0))
-
-
+    try:
+        intro_text = str(score)
+    except NameError:
+        intro_text = '0'
     screen.blit(fon_start, (0, 0))
-
+    font = pygame.font.Font(None, 55)
+    string_rendered = font.render(intro_text, 1, pygame.Color('white'))
+    intro_rect = string_rendered.get_rect()
+    intro_rect.top = 280
+    intro_rect.x = (WIDTH - intro_rect.width)/2
+    screen.blit(string_rendered, intro_rect)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -102,6 +109,7 @@ def end_screen():
         star_group.draw(screen)
         player_group.draw(screen)
         screen.blit(res, (-30, 80))
+        screen.blit(string_rendered, intro_rect)
         pygame.display.flip()
 
 
