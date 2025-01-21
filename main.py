@@ -85,6 +85,7 @@ def kill_sprites():
     for star in star_group:
         star.kill()
 
+
 def is_new_record(score):
     f = open('record.txt')
     a = f.read()
@@ -104,28 +105,51 @@ def is_new_record(score):
         f.close()
         return True
 
+
 def end_screen():
     kill_sprites()
     screen.blit(fon, (0, 0))
-    intro_text = str(score)
+    res_text = str(score)
     screen.blit(fon_start, (0, 0))
-    font = pygame.font.Font(None, 55)
-    string_rendered = font.render(intro_text, 1, pygame.Color('white'))
-    intro_rect = string_rendered.get_rect()
-    intro_rect.top = 270
-    intro_rect.x = (WIDTH - intro_rect.width)/2
-    screen.blit(string_rendered, intro_rect)
+    res_font = pygame.font.Font(None, 55)
+    res_string_rendered = res_font.render(res_text, 1, pygame.Color('white'))
+    res_rect = res_string_rendered.get_rect()
+    res_rect.top = 270
+    res_rect.x = (WIDTH - res_rect.width) / 2
+    screen.blit(res_string_rendered, res_rect)
     flag = is_new_record(score)
+
+    intro_text = ["нажмите пробел, чтобы", "начать сначала"]
+    font = pygame.font.Font(None, 30)
+    top = 500
+    for line in intro_text:
+        string_rendered = font.render(line, 1, pygame.Color('white'))
+        intro_rect = string_rendered.get_rect()
+        top += 30
+        intro_rect.top = top
+        intro_rect.x = (WIDTH - intro_rect.width) / 2
+        screen.blit(string_rendered, intro_rect)
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                return
         screen.blit(fon, (0, 0))
         comet_group.draw(screen)
         star_group.draw(screen)
         player_group.draw(screen)
         screen.blit(res, (-30, 80))
-        screen.blit(string_rendered, intro_rect)
+        screen.blit(res_string_rendered, res_rect)
+        top = 500
+        for line in intro_text:
+            string_rendered = font.render(line, 1, pygame.Color('white'))
+            intro_rect = string_rendered.get_rect()
+            top += 30
+            intro_rect.top = top
+            intro_rect.x = (WIDTH - intro_rect.width) / 2
+            screen.blit(string_rendered, intro_rect)
         if flag:
             screen.blit(new_record, (85, 310))
         pygame.display.flip()
@@ -209,97 +233,99 @@ player_image = pygame.transform.scale(load_image('rocket.png'), (250, 250))
 star_image = pygame.transform.scale(load_image('star.png'), (70, 70))
 meteorite_image = pygame.transform.scale(load_image('meteorite.png'), (50, 100))
 
-level = 0
 lvl1 = pygame.transform.scale(load_image('lvl1.png'), (300, 125))
 lvl2 = pygame.transform.scale(load_image('lvl2.png'), (300, 125))
 lvl3 = pygame.transform.scale(load_image('lvl3.png'), (300, 125))
 res = pygame.transform.scale(load_image('res.png'), (480, 200))
 new_record = pygame.transform.scale(load_image('new_record.png'), (240, 100))
-player = Player(0, 210)
 comet_image = pygame.transform.scale(load_image('meteorite.png'), (50, 100))
 
-#end_screen() #!!!
-start_screen()
-
-# level = int(input())
-# level -= 1
-
-levels_stars = [(10, 1000, 700, 800, 900), (7, 1000, 700, 800, 900), (5, 1000, 700, 800, 900)]
-levels_comets = [(10, 1000, 700, 800, 900), (7, 1000, 700, 800, 900), (5, 1000, 700, 800, 900)]
-sum_time_move_star = 0
-sum_time_add_star = 0
-ind_star = 1
-sum_time_move_comet = 0
-sum_time_add_comet = 0
-ind_comet = 1
-score = 0
-end = False
-
+level = 0  # переместить в цикл while, если не надо сохранять сложность уровня при "новой" игре
 while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            terminate()
+    player = Player(0, 210)
+    # end_screen()  # !!!
+    start_screen()
 
-    last_time = clock.tick(FPS)
-    sum_time_add_star += last_time
-    sum_time_move_star += last_time
-    sum_time_add_comet += last_time
-    sum_time_move_comet += last_time
+    # level = int(input())
+    # level -= 1
 
-    if sum_time_move_star > levels_stars[level][0]:
-        sum_time_move_star = 0
+    levels_stars = [(10, 1000, 700, 800, 900), (7, 1000, 700, 800, 900), (5, 1000, 700, 800, 900)]
+    levels_comets = [(10, 1000, 700, 800, 900), (7, 1000, 700, 800, 900), (5, 1000, 700, 800, 900)]
+    sum_time_move_star = 0
+    sum_time_add_star = 0
+    ind_star = 1
+    sum_time_move_comet = 0
+    sum_time_add_comet = 0
+    ind_comet = 1
+    score = 0
+    end = False
+    play = True
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+
+        last_time = clock.tick(FPS)
+        sum_time_add_star += last_time
+        sum_time_move_star += last_time
+        sum_time_add_comet += last_time
+        sum_time_move_comet += last_time
+
+        if sum_time_move_star > levels_stars[level][0]:
+            sum_time_move_star = 0
+            for star in star_group:
+                star.move(5)
+        if sum_time_add_star > levels_stars[level][ind_star]:
+            ind_star = random.randint(1, 4)
+            Star(random.randint(0, 300), -80)
+            sum_time_add_star = 0
+
+        if sum_time_move_comet > levels_comets[level][0]:
+            sum_time_move_comet = 0
+            for comet in comet_group:
+                comet.move(5)
+        if sum_time_add_comet > levels_comets[level][ind_comet]:
+            ind_comet = random.randint(1, 4)
+            Comet(random.randint(0, 300), -80)
+            sum_time_add_comet = 0
+
+        pressed = pygame.key.get_pressed()
+        if pressed[pygame.K_LEFT]:
+            player.left()
+        if pressed[pygame.K_RIGHT]:
+            player.right()
+
+        # list_star = []
+        # list_comet = []
+        # for x in player_group:
+        #     list_star = pygame.sprite.spritecollide(x, star_group, True)
+        # for x in player_group:
+        #     list_comet = pygame.sprite.spritecollide(x, comet_group, True)
         for star in star_group:
-            star.move(5)
-    if sum_time_add_star > levels_stars[level][ind_star]:
-        ind_star = random.randint(1, 4)
-        Star(random.randint(0, 300), -80)
-        sum_time_add_star = 0
+            if player.boom(star):
+                score += 1
 
-    if sum_time_move_comet > levels_comets[level][0]:
-        sum_time_move_comet = 0
         for comet in comet_group:
-            comet.move(5)
-    if sum_time_add_comet > levels_comets[level][ind_comet]:
-        ind_comet = random.randint(1, 4)
-        Comet(random.randint(0, 300), -80)
-        sum_time_add_comet = 0
-
-    pressed = pygame.key.get_pressed()
-    if pressed[pygame.K_LEFT]:
-        player.left()
-    if pressed[pygame.K_RIGHT]:
-        player.right()
-
-    # list_star = []
-    # list_comet = []
-    # for x in player_group:
-    #     list_star = pygame.sprite.spritecollide(x, star_group, True)
-    # for x in player_group:
-    #     list_comet = pygame.sprite.spritecollide(x, comet_group, True)
-    for star in star_group:
-        if player.boom(star):
-            score += 1
-
-    for comet in comet_group:
-        if player.boom(comet):
-            end = True
+            if player.boom(comet):
+                end = True
+                break
+        if end:
             break
-    if end:
-        break
 
-    # if list_comet:
-    #     terminate()
+        # if list_comet:
+        #     terminate()
 
-    # score += len(list_star)
+        # score += len(list_star)
 
-    screen.blit(fon, (0, 0))
-    comet_group.draw(screen)
-    star_group.draw(screen)
-    player_group.draw(screen)
-    font_in_game = pygame.font.Font(None, 40)
-    text_in_game = font_in_game.render(f"Result: {score}", True, (255, 255, 255))
-    text_rect_in_game = text_in_game.get_rect(center=(320, 30))
-    screen.blit(text_in_game, text_rect_in_game)
-    pygame.display.flip()
-    # clock.tick(FPS)
-end_screen()
+        screen.blit(fon, (0, 0))
+        comet_group.draw(screen)
+        star_group.draw(screen)
+        player_group.draw(screen)
+        font_in_game = pygame.font.Font(None, 40)
+        text_in_game = font_in_game.render(f"Result: {score}", True, (255, 255, 255))
+        text_rect_in_game = text_in_game.get_rect(center=(320, 30))
+        screen.blit(text_in_game, text_rect_in_game)
+        pygame.display.flip()
+        # clock.tick(FPS)
+    end_screen()
