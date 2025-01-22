@@ -338,6 +338,14 @@ while True:
 
         # score += len(list_star)
 
+        for comet in comet_group:
+            if comet.pos[1] > 800:
+                comet.kill()
+
+        for star in star_group:
+            if star.pos[1] > 800:
+                star.kill()
+
         screen.blit(fon, (0, 0))
         comet_group.draw(screen)
         star_group.draw(screen)
