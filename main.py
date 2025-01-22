@@ -89,21 +89,16 @@ def kill_sprites():
 def is_new_record(score):
     f = open('record.txt')
     a = f.read()
-    a = [int(i) for i in a]
+    a = [int(i) for i in a.split('\n')]
     f.close()
-    if a:
-        rec = a[0]
-        if score > rec:
-            with open('record.txt', 'w') as f:
-                f.writelines(str(score))
-            f.close()
-            return True
-        return False
-    else:
+    rec = a[level]
+    if score > rec:
+        a[level] = score
         with open('record.txt', 'w') as f:
-            f.writelines(str(score))
+            f.writelines('\n'.join([str(i) for i in a]))
         f.close()
         return True
+    return False
 
 
 def end_screen():
