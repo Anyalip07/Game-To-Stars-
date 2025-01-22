@@ -100,6 +100,13 @@ def is_new_record(score):
         return True
     return False
 
+def get_rec():
+    f = open('record.txt')
+    a = f.read()
+    a = [int(i) for i in a.split('\n')]
+    f.close()
+    rec = a[level]
+    return rec
 
 def end_screen():
     kill_sprites()
@@ -113,6 +120,14 @@ def end_screen():
     res_rect.x = (WIDTH - res_rect.width) / 2
     screen.blit(res_string_rendered, res_rect)
     flag = is_new_record(score)
+
+    rec_text = 'Ваш рекорд: '+str(get_rec())
+    rec_font = pygame.font.Font(None, 30)
+    rec_string_rendered = rec_font.render(rec_text, 1, pygame.Color('white'))
+    rec_rect = rec_string_rendered.get_rect()
+    rec_rect.top = 345
+    rec_rect.x = (WIDTH - rec_rect.width) / 2
+    screen.blit(rec_string_rendered, rec_rect)
 
     intro_text = ["нажмите пробел, чтобы", "начать сначала"]
     font = pygame.font.Font(None, 30)
@@ -147,6 +162,8 @@ def end_screen():
             screen.blit(string_rendered, intro_rect)
         if flag:
             screen.blit(new_record, (85, 310))
+        else:
+            screen.blit(rec_string_rendered, rec_rect)
         pygame.display.flip()
 
 
