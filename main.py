@@ -38,9 +38,19 @@ def start_screen():
     font = pygame.font.Font(None, 30)
     string_rendered = font.render(intro_text, 1, pygame.Color('white'))
     intro_rect = string_rendered.get_rect()
-    intro_rect.top = 550
+    intro_rect.top = 500
     intro_rect.x = 20
     screen.blit(string_rendered, intro_rect)
+
+    help_text = ["используйте стрелки для", "смены уровня (вверх/вниз)", "управления ракетой (вправо/влево)"]
+    top = 500
+    for line in help_text:
+        help_string_rendered = font.render(line, 1, pygame.Color('white'))
+        help_rect = help_string_rendered.get_rect()
+        top += 30
+        help_rect.top = top
+        help_rect.x = (WIDTH - help_rect.width) / 2
+        screen.blit(help_string_rendered, help_rect)
 
     while True:
         global level
@@ -65,8 +75,16 @@ def start_screen():
             break
         screen.blit(fon_start, (0, 0))
         screen.blit(string_rendered, intro_rect)
+        top = 500
+        for line in help_text:
+            help_string_rendered = font.render(line, 1, pygame.Color('white'))
+            help_rect = help_string_rendered.get_rect()
+            top += 30
+            help_rect.top = top
+            help_rect.x = (WIDTH - help_rect.width) / 2
+            screen.blit(help_string_rendered, help_rect)
         player_group.draw(screen)
-        screen.blit(lvl, (50, 435))
+        screen.blit(lvl, (50, 400))
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -100,6 +118,7 @@ def is_new_record(score):
         return True
     return False
 
+
 def get_rec():
     f = open('record.txt')
     a = f.read()
@@ -107,6 +126,7 @@ def get_rec():
     f.close()
     rec = a[level]
     return rec
+
 
 def end_screen():
     kill_sprites()
@@ -121,7 +141,7 @@ def end_screen():
     screen.blit(res_string_rendered, res_rect)
     flag = is_new_record(score)
 
-    rec_text = 'Ваш рекорд: '+str(get_rec())
+    rec_text = 'Ваш рекорд: ' + str(get_rec())
     rec_font = pygame.font.Font(None, 30)
     rec_string_rendered = rec_font.render(rec_text, 1, pygame.Color('white'))
     rec_rect = rec_string_rendered.get_rect()
@@ -254,7 +274,7 @@ comet_image = pygame.transform.scale(load_image('meteorite.png'), (50, 100))
 
 level = 0  # переместить в цикл while, если не надо сохранять сложность уровня при "новой" игре
 while True:
-    player = Player(45, 230)
+    player = Player(40, 220)
     # end_screen()  # !!!
     start_screen()
 
