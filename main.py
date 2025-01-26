@@ -34,7 +34,7 @@ def load_image(name, colorkey=None):
 def start_screen():
     global level
     intro_text = "нажмите пробел, чтобы начать игру"
-    screen.blit(fon_start, (0, 0))
+    screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
     string_rendered = font.render(intro_text, 1, pygame.Color('white'))
     intro_rect = string_rendered.get_rect()
@@ -73,8 +73,9 @@ def start_screen():
             lvl = lvl3
         if ok:
             break
-        screen.blit(fon_start, (0, 0))
+        screen.blit(fon, (0, 0))
         screen.blit(string_rendered, intro_rect)
+        screen.blit(game_name1, ((WIDTH - game_name1.get_width()) / 2, 100)) #!!!
         top = 500
         for line in help_text:
             help_string_rendered = font.render(line, 1, pygame.Color('white'))
@@ -132,7 +133,7 @@ def end_screen():
     kill_sprites()
     screen.blit(fon, (0, 0))
     res_text = str(score)
-    screen.blit(fon_start, (0, 0))
+    screen.blit(fon, (0, 0))
     res_font = pygame.font.Font(None, 55)
     res_string_rendered = res_font.render(res_text, 1, pygame.Color('white'))
     res_rect = res_string_rendered.get_rect()
@@ -255,7 +256,8 @@ clock = pygame.time.Clock()
 
 fon = pygame.transform.scale(load_image('sky.jpg'), (400, 645))
 
-fon_start = pygame.transform.scale(load_image('sky_start.jpg'), (400, 645))
+game_name1 = pygame.transform.scale(load_image('image.png'), (420, 175))
+game_name2 = pygame.transform.scale(load_image('image_2.png'), (420, 175))
 
 all_sprites = pygame.sprite.Group()
 player_group = pygame.sprite.Group()
