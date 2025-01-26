@@ -52,6 +52,9 @@ def start_screen():
         help_rect.x = (WIDTH - help_rect.width) / 2
         screen.blit(help_string_rendered, help_rect)
 
+    sum_time = 0
+    picture = game_name1
+
     while True:
         global level
         ok = 0
@@ -75,7 +78,14 @@ def start_screen():
             break
         screen.blit(fon, (0, 0))
         screen.blit(string_rendered, intro_rect)
-        screen.blit(game_name1, ((WIDTH - game_name1.get_width()) / 2, 100)) #!!!
+        sum_time += clock.tick(FPS)
+        if sum_time >= 300:
+            sum_time = 0
+            if picture == game_name1:
+                picture = game_name2
+            else:
+                picture = game_name1
+        screen.blit(picture, ((WIDTH - game_name1.get_width()) / 2, 100))  # !!!
         top = 500
         for line in help_text:
             help_string_rendered = font.render(line, 1, pygame.Color('white'))
@@ -87,7 +97,6 @@ def start_screen():
         player_group.draw(screen)
         screen.blit(lvl, (50, 400))
         pygame.display.flip()
-        clock.tick(FPS)
 
     for i in range(24):
         screen.blit(fon, (0, 0))
